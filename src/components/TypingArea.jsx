@@ -32,7 +32,7 @@ const TypingArea = ({ practiceText, userInput, currentIndex, errors, onInput, on
 
   const renderText = () => {
     return practiceText.split('').map((char, index) => {
-      let className = 'text-[#999]'
+      let className = 'text-[#999] dark:text-gray-500'
       
       if (index < currentIndex) {
         className = errors.includes(index) ? 'char-incorrect font-bold' : 'char-correct font-bold'
@@ -45,13 +45,13 @@ const TypingArea = ({ practiceText, userInput, currentIndex, errors, onInput, on
   }
 
   return (
-    <div className="bg-white border-3 border-black shadow-[4px_4px_0px_#000] p-4 h-full flex flex-col">
-      <h2 className="text-lg font-black text-[#1a1a1a] mb-3">TYPE HERE</h2>
+    <div className="bg-white dark:bg-[#2c3e50] border-3 border-black shadow-[4px_4px_0px_#000] p-4 h-full flex flex-col">
+      <h2 className="text-lg font-black text-[#1a1a1a] dark:text-white mb-3">TYPE HERE</h2>
       
       <div 
         ref={textContainerRef}
         onClick={() => inputRef.current?.focus()}
-        className="flex-1 bg-[#fafafa] border-2 border-[#ddd] p-4 cursor-text overflow-auto mb-3"
+        className="flex-1 bg-[#fafafa] dark:bg-[#34495e] border-2 border-[#ddd] dark:border-gray-600 p-4 cursor-text overflow-auto mb-3"
       >
         <p className="text-2xl leading-relaxed font-mono select-none">
           {renderText()}
@@ -72,7 +72,7 @@ const TypingArea = ({ practiceText, userInput, currentIndex, errors, onInput, on
         spellCheck="false"
       />
 
-      <p className="text-xs text-[#666] font-bold text-center mt-2">
+      <p className="text-xs text-[#666] dark:text-gray-400 font-bold text-center mt-2">
         Click to focus • Start typing
       </p>
     </div>

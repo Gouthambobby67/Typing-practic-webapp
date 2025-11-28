@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import LetterSelector from './components/LetterSelector'
 import TypingArea from './components/TypingArea'
 import Stats from './components/Stats'
@@ -7,6 +7,8 @@ import TypingTest from './components/TypingTest'
 
 function App() {
   const [activeTab, setActiveTab] = useState('practice') // 'practice' or 'test'
+  const [theme, setTheme] = useState('light')
+  
   // Letter selection state
   const [selectedLetters, setSelectedLetters] = useState(['a', 's', 'd', 'f'])
   const [practiceText, setPracticeText] = useState('')
@@ -20,14 +22,24 @@ function App() {
   // Stats
   const [wpm, setWpm] = useState(0)
   const [accuracy, setAccuracy] = useState(100)
-  const [totalChars, setTotalChars] = useState(0)
   const [correctChars, setCorrectChars] = useState(0)
   
   // Keyboard highlight
   const [activeKey, setActiveKey] = useState('')
 
-  // Generate practice text based on selected letters
-  const generateText = () => {
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+  }, [theme])
+
+  const toggleTheme = () => {
+    setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light')
+  }
+
+  const generateText = useCallback(() => {
     if (selectedLetters.length === 0) return ''
     
     const words = []
@@ -44,7 +56,7 @@ function App() {
     }
     
     return words.join(' ')
-  }
+  }, [selectedLetters])
 
   // Initialize text when letters change
   useEffect(() => {
@@ -57,11 +69,9 @@ function App() {
       setStartTime(null)
       setWpm(0)
       setAccuracy(100)
-      setTotalChars(0)
       setCorrectChars(0)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedLetters])
+  }, [selectedLetters, generateText])
 
   const resetPractice = () => {
     setUserInput('')
@@ -70,20 +80,16 @@ function App() {
     setStartTime(null)
     setWpm(0)
     setAccuracy(100)
-    setTotalChars(0)
     setCorrectChars(0)
   }
 
-  const handleInput = (e) => {
-    const value = e.target.value
-    const char = value[value.length - 1]
-    
-    // Start timer on first character
-    if (!startTime && value.length === 1) {
+  const startTimer = () => {
+    if (!startTime) {
       setStartTime(Date.now())
     }
+  }
 
-    // Check if character is correct
+  const checkCharacter = (char) => {
     if (char === practiceText[currentIndex]) {
       setCorrectChars(prev => prev + 1)
       setActiveKey(char)
@@ -91,12 +97,9 @@ function App() {
       setErrors(prev => [...prev, currentIndex])
       setActiveKey('')
     }
+  }
 
-    setUserInput(value)
-    setCurrentIndex(value.length)
-    setTotalChars(value.length)
-
-    // Calculate stats
+  const calculateStats = (value) => {
     if (startTime && value.length > 0) {
       const timeElapsed = (Date.now() - startTime) / 1000 / 60 // in minutes
       const wordsTyped = value.trim().split(/\s+/).length
@@ -106,12 +109,27 @@ function App() {
       setWpm(newWpm)
       setAccuracy(newAccuracy)
     }
+  }
 
-    // Generate new text when reaching the end
+  const generateMoreText = (value) => {
     if (value.length >= practiceText.length - 10) {
       const newText = generateText()
       setPracticeText(prev => prev + ' ' + newText)
     }
+  }
+
+  const handleInput = (e) => {
+    const value = e.target.value
+    const char = value[value.length - 1]
+    
+    startTimer()
+    checkCharacter(char)
+
+    setUserInput(value)
+    setCurrentIndex(value.length)
+
+    calculateStats(value)
+    generateMoreText(value)
   }
 
   const handleKeyDown = (e) => {
@@ -125,19 +143,19 @@ function App() {
   }
 
   return (
-    <div className="h-screen bg-[#f5f5f5] p-4 overflow-hidden">
+    <div className="h-screen bg-[#f5f5f5] dark:bg-[#1a1a1a] p-4 overflow-hidden">
       <div className="h-full max-w-[1600px] mx-auto flex flex-col gap-4">
         {/* Header + Tabs */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <h1 className="text-3xl font-black text-[#1a1a1a]">TypePractice</h1>
+            <h1 className="text-3xl font-black text-[#1a1a1a] dark:text-white">TypePractice</h1>
             <div className="flex gap-2">
               <button
                 onClick={() => setActiveTab('practice')}
                 className={`px-4 py-2 font-black text-sm border-3 border-black transition-all
                   ${activeTab === 'practice'
                     ? 'bg-[#3498db] text-white shadow-[3px_3px_0px_#000]'
-                    : 'bg-white text-[#666] shadow-[2px_2px_0px_#000]'}
+                    : 'bg-white dark:bg-gray-700 text-[#666] dark:text-gray-300 shadow-[2px_2px_0px_#000]'}
                   active:translate-x-[1px] active:translate-y-[1px] active:shadow-[1px_1px_0px_#000]`}
               >
                 📚 PRACTICE
@@ -147,16 +165,24 @@ function App() {
                 className={`px-4 py-2 font-black text-sm border-3 border-black transition-all
                   ${activeTab === 'test'
                     ? 'bg-[#3498db] text-white shadow-[3px_3px_0px_#000]'
-                    : 'bg-white text-[#666] shadow-[2px_2px_0px_#000]'}
+                    : 'bg-white dark:bg-gray-700 text-[#666] dark:text-gray-300 shadow-[2px_2px_0px_#000]'}
                   active:translate-x-[1px] active:translate-y-[1px] active:shadow-[1px_1px_0px_#000]`}
               >
                 🎯 TEST
               </button>
             </div>
           </div>
-          {activeTab === 'practice' && (
-            <Stats wpm={wpm} accuracy={accuracy} errors={errors.length} />
-          )}
+          <div className="flex items-center gap-4">
+            {activeTab === 'practice' && (
+              <Stats wpm={wpm} accuracy={accuracy} errors={errors.length} />
+            )}
+            <button
+              onClick={toggleTheme}
+              className="px-3 py-2 bg-white dark:bg-gray-700 text-[#666] dark:text-gray-300 font-black text-sm border-3 border-black shadow-[2px_2px_0px_#000] active:translate-x-[1px] active:translate-y-[1px] active:shadow-[1px_1px_0px_#000]"
+            >
+              {theme === 'light' ? '🌙' : '☀️'}
+            </button>
+          </div>
         </div>
 
         {/* Tab Content */}

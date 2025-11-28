@@ -33,15 +33,15 @@ const Keyboard = ({ activeKey, selectedLetters }) => {
     const isActive = activeKey === key
     const isSelected = selectedLetters.includes(key)
     
-    let bgColor = 'bg-white'
-    let textColor = 'text-[#ccc]'
+    let bgColor = 'bg-white dark:bg-gray-800'
+    let textColor = 'text-[#ccc] dark:text-gray-500'
     
     if (isActive) {
       bgColor = 'bg-[#f39c12]'
       textColor = 'text-white'
     } else if (isSelected) {
-      bgColor = 'bg-[#ecf0f1]'
-      textColor = 'text-[#1a1a1a]'
+      bgColor = 'bg-[#ecf0f1] dark:bg-gray-600'
+      textColor = 'text-[#1a1a1a] dark:text-white'
     }
 
     return (
@@ -61,8 +61,8 @@ const Keyboard = ({ activeKey, selectedLetters }) => {
   }
 
   return (
-    <div className="bg-white border-3 border-black shadow-[4px_4px_0px_#000] p-4 h-full flex flex-col justify-center">
-      <h2 className="text-lg font-black text-[#1a1a1a] mb-3">KEYBOARD</h2>
+    <div className="bg-white dark:bg-[#2c3e50] border-3 border-black shadow-[4px_4px_0px_#000] p-4 h-full flex flex-col justify-center">
+      <h2 className="text-lg font-black text-[#1a1a1a] dark:text-white mb-3">KEYBOARD</h2>
       
       <div className="space-y-2">
         {keyboardLayout.map((row, rowIndex) => (
@@ -73,7 +73,7 @@ const Keyboard = ({ activeKey, selectedLetters }) => {
         
         <div className="flex justify-center mt-3">
           <div className={`w-64 h-10 flex items-center justify-center font-black text-xs
-            ${activeKey === ' ' ? 'bg-[#f39c12] text-white shadow-[1px_1px_0px_#000] translate-x-[1px] translate-y-[1px]' : 'bg-white text-[#999] shadow-[2px_2px_0px_#000]'}
+            ${activeKey === ' ' ? 'bg-[#f39c12] text-white shadow-[1px_1px_0px_#000] translate-x-[1px] translate-y-[1px]' : 'bg-white dark:bg-gray-600 text-[#999] dark:text-gray-300 shadow-[2px_2px_0px_#000]'}
             border-2 border-black transition-all duration-75`}>
             SPACE
           </div>

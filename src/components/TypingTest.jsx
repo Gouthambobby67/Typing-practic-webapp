@@ -1,13 +1,19 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { animate as anime, stagger } from 'animejs'
+import Keyboard from './Keyboard'
 
 const testTexts = [
   "The quick brown fox jumps over the lazy dog. Pack my box with five dozen liquor jugs. How vexingly quick daft zebras jump!",
   "Technology is rapidly changing the way we live and work. From smartphones to artificial intelligence, innovation continues to shape our future in unprecedented ways.",
   "Learning to type efficiently is a valuable skill in today's digital world. Practice regularly and focus on accuracy before speed to develop proper muscle memory.",
   "The art of programming requires patience, logic, and creativity. Good code is not just about making things work, but writing clean and maintainable solutions.",
-  "Success comes from consistent effort and dedication. Small daily improvements lead to significant results over time. Never underestimate the power of persistence."
+  "Success comes from consistent effort and dedication. Small daily improvements lead to significant results over time. Never underestimate the power of persistence.",
+  "The sun always shines above the clouds. Keep your face to the sunshine and you cannot see a shadow. The future belongs to those who believe in the beauty of their dreams.",
+  "To be yourself in a world that is constantly trying to make you something else is the greatest accomplishment. The only way to do great work is to love what you do.",
+  "Life is a journey, not a destination. It is not in the stars to hold our destiny but in ourselves. The purpose of our lives is to be happy."
 ]
+
+const allLetters = 'abcdefghijklmnopqrstuvwxyz'.split('')
 
 const TypingTest = () => {
   const [testText, setTestText] = useState(testTexts[0])
@@ -197,7 +203,7 @@ const TypingTest = () => {
 
   const renderText = () => {
     return testText.split('').map((char, index) => {
-      let className = 'text-[#999]'
+      let className = 'text-[#999] dark:text-gray-500'
       
       if (index < currentIndex) {
         className = errors.includes(index) ? 'char-incorrect font-bold' : 'char-correct font-bold'
@@ -209,44 +215,7 @@ const TypingTest = () => {
     })
   }
 
-  const renderKeyboard = () => {
-    const keyboardLayout = [
-      ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
-      ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
-      ['z', 'x', 'c', 'v', 'b', 'n', 'm']
-    ]
 
-    return (
-      <div className="space-y-2">
-        {keyboardLayout.map((row, rowIndex) => (
-          <div key={rowIndex} className="flex gap-2 justify-center" style={{ paddingLeft: `${rowIndex * 16}px` }}>
-            {row.map((key) => (
-              <div
-                key={key}
-                className={`
-                  w-10 h-10 flex items-center justify-center font-black text-base uppercase
-                  border-2 border-black transition-all duration-75
-                  ${activeKey === key 
-                    ? 'bg-[#f39c12] text-white shadow-[1px_1px_0px_#000] translate-x-[1px] translate-y-[1px]'
-                    : 'bg-[#ecf0f1] text-[#1a1a1a] shadow-[2px_2px_0px_#000]'}
-                `}
-              >
-                {key}
-              </div>
-            ))}
-          </div>
-        ))}
-        
-        <div className="flex justify-center mt-3">
-          <div className={`w-64 h-10 flex items-center justify-center font-black text-xs
-            ${activeKey === ' ' ? 'bg-[#f39c12] text-white shadow-[1px_1px_0px_#000] translate-x-[1px] translate-y-[1px]' : 'bg-[#ecf0f1] text-[#999] shadow-[2px_2px_0px_#000]'}
-            border-2 border-black transition-all duration-75`}>
-            SPACE
-          </div>
-        </div>
-      </div>
-    )
-  }
 
   const totalTime = endTime && startTime ? ((endTime - startTime) / 1000).toFixed(1) : 0
 
@@ -281,12 +250,12 @@ const TypingTest = () => {
       {/* Main Content */}
       <div className="flex-1 grid grid-cols-2 gap-4 min-h-0">
         {/* Left - Typing Area */}
-        <div className="bg-white border-3 border-black shadow-[4px_4px_0px_#000] p-4 flex flex-col min-h-0">
-          <h2 className="text-lg font-black text-[#1a1a1a] mb-3">TYPING TEST</h2>
+        <div className="bg-white dark:bg-[#2c3e50] border-3 border-black shadow-[4px_4px_0px_#000] p-4 flex flex-col min-h-0">
+          <h2 className="text-lg font-black text-[#1a1a1a] dark:text-white mb-3">TYPING TEST</h2>
           
           <div 
             onClick={() => inputRef.current?.focus()}
-            className="flex-1 bg-[#fafafa] border-2 border-[#ddd] p-4 cursor-text overflow-auto mb-3"
+            className="flex-1 bg-[#fafafa] dark:bg-[#34495e] border-2 border-[#ddd] dark:border-gray-600 p-4 cursor-text overflow-auto mb-3"
           >
             <p className="text-2xl leading-relaxed font-mono select-none">
               {renderText()}
@@ -314,18 +283,17 @@ const TypingTest = () => {
               <p className="text-sm font-bold">Time: {totalTime}s | WPM: {wpm} | Accuracy: {accuracy}%</p>
             </div>
           ) : (
-            <p className="text-xs text-[#666] font-bold text-center">
+            <p className="text-xs text-[#666] dark:text-gray-400 font-bold text-center">
               Click to focus • Start typing the text above
             </p>
           )}
         </div>
 
         {/* Right - Keyboard */}
-        <div className="bg-white border-3 border-black shadow-[4px_4px_0px_#000] p-4 flex flex-col justify-center">
-          <h2 className="text-lg font-black text-[#1a1a1a] mb-3">KEYBOARD</h2>
-          {renderKeyboard()}
-          <div className="mt-4 p-3 bg-[#ecf0f1] border-2 border-[#bdc3c7] text-center">
-            <p className="text-xs font-bold text-[#555]">
+        <div className="bg-white dark:bg-[#2c3e50] border-3 border-black shadow-[4px_4px_0px_#000] p-4 flex flex-col justify-center">
+          <Keyboard activeKey={activeKey} selectedLetters={allLetters} />
+          <div className="mt-4 p-3 bg-[#ecf0f1] dark:bg-[#34495e] border-2 border-[#bdc3c7] dark:border-gray-600 text-center">
+            <p className="text-xs font-bold text-[#555] dark:text-gray-300">
               {isFinished ? '✅ Test finished! Click RESET or NEW TEST' : '⌨️ Type the text to complete the test'}
             </p>
           </div>

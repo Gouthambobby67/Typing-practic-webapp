@@ -45,7 +45,7 @@ const LetterSelector = ({ selectedLetters, setSelectedLetters, onReset }) => {
         onClick={handleClick}
         className={`
           w-10 h-10 font-black text-lg uppercase border-3 border-black transition-all
-          ${isSelected ? 'bg-[#3498db] text-white shadow-[3px_3px_0px_#000]' : 'bg-white text-[#999] shadow-[2px_2px_0px_#000]'}
+          ${isSelected ? 'bg-[#3498db] text-white shadow-[3px_3px_0px_#000]' : 'bg-white dark:bg-gray-700 text-[#999] dark:text-gray-400 shadow-[2px_2px_0px_#000]'}
           active:translate-x-[1px] active:translate-y-[1px] active:shadow-[1px_1px_0px_#000]
         `}
       >
@@ -55,9 +55,9 @@ const LetterSelector = ({ selectedLetters, setSelectedLetters, onReset }) => {
   }
 
   return (
-    <div className="bg-white border-3 border-black shadow-[4px_4px_0px_#000] p-4 h-fit">
+    <div className="bg-white dark:bg-[#2c3e50] border-3 border-black shadow-[4px_4px_0px_#000] p-4 h-fit">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-black">SELECT LETTERS</h2>
+        <h2 className="text-lg font-black dark:text-white">SELECT LETTERS</h2>
         <div className="flex gap-2">
           <button onClick={() => setSelectedLetters(['a','s','d','f'])} className="px-3 py-1 bg-[#95a5a6] text-white font-black text-xs border-2 border-black shadow-[2px_2px_0px_#000] active:translate-x-[1px] active:translate-y-[1px] active:shadow-[1px_1px_0px_#000]">
             RESET
@@ -86,8 +86,8 @@ const LetterSelector = ({ selectedLetters, setSelectedLetters, onReset }) => {
         </div>
       </div>
 
-      <div className="mt-3 p-2 bg-[#ecf0f1] border-2 border-[#bdc3c7] text-center">
-        <span className="text-xs font-bold text-[#555]">
+      <div className="mt-3 p-2 bg-[#ecf0f1] dark:bg-[#34495e] border-2 border-[#bdc3c7] dark:border-gray-600 text-center">
+        <span className="text-xs font-bold text-[#555] dark:text-gray-300">
           <span className="text-[#3498db]">{selectedLetters.length}</span> selected: {selectedLetters.sort().join(' ')}
         </span>
       </div>
