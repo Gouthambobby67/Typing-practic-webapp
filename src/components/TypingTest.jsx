@@ -92,7 +92,7 @@ const TypingTest = () => {
     setCurrentIndex(value.length)
 
     // Calculate stats
-    if (startTime && value.length > 0) {
+    if (char === ' ' && startTime && value.length > 0) {
       const timeElapsed = (Date.now() - startTime) / 1000 / 60
       const wordsTyped = value.trim().split(/\s+/).length
       const newWpm = Math.round(wordsTyped / timeElapsed)

@@ -1,4 +1,4 @@
-import { useState, useCallback, lazy, Suspense, useContext } from 'react'
+import { useState, useCallback, lazy, Suspense, useContext, useEffect } from 'react'
 import { ThemeContext } from './context/ThemeContext'
 import LetterSelector from './components/LetterSelector'
 import TypingArea from './components/TypingArea'
@@ -119,7 +119,9 @@ function App() {
     setUserInput(value)
     setCurrentIndex(value.length)
 
-    calculateStats(value)
+    if (char === ' ') {
+      calculateStats(value)
+    }
     generateMoreText(value)
   }
 
