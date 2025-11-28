@@ -1,7 +1,8 @@
-import React, { useEffect, useRef } from 'react'
+import { memo, useEffect, useRef } from 'react'
 import { animate as anime } from 'animejs'
+import { STATS_ANIMATION, ERROR_ANIMATION } from '../constants'
 
-const Stats = ({ wpm, accuracy, errors }) => {
+const Stats = memo(({ wpm, accuracy, errors }) => {
   const wpmRef = useRef(null)
   const accuracyRef = useRef(null)
   const errorsRef = useRef(null)
@@ -17,9 +18,7 @@ const Stats = ({ wpm, accuracy, errors }) => {
         anime({
           targets: wpmEl,
           innerHTML: [currentWpm, wpm],
-          round: 1,
-          duration: 800,
-          easing: 'easeOutExpo'
+          ...STATS_ANIMATION,
         })
       }
     }
@@ -30,9 +29,7 @@ const Stats = ({ wpm, accuracy, errors }) => {
         anime({
           targets: accuracyEl,
           innerHTML: [currentAccuracy, accuracy],
-          round: 1,
-          duration: 800,
-          easing: 'easeOutExpo',
+          ...STATS_ANIMATION,
           update: (anim) => {
             const val = Math.round(anim.animatables[0].target.innerHTML)
             if (accuracyEl) {
@@ -49,9 +46,7 @@ const Stats = ({ wpm, accuracy, errors }) => {
         anime({
           targets: errorsEl,
           innerHTML: [currentErrors, errors],
-          round: 1,
-          duration: 600,
-          easing: 'easeOutBounce'
+          ...ERROR_ANIMATION,
         })
         if (errorsEl.parentElement) {
           anime({
@@ -81,7 +76,7 @@ const Stats = ({ wpm, accuracy, errors }) => {
       </div>
     </div>
   )
-}
+})
 
 export default Stats
 

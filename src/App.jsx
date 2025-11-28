@@ -1,13 +1,17 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useCallback, lazy, Suspense, useContext } from 'react'
+import { ThemeContext } from './context/ThemeContext'
 import LetterSelector from './components/LetterSelector'
 import TypingArea from './components/TypingArea'
 import Stats from './components/Stats'
 import Keyboard from './components/Keyboard'
-import TypingTest from './components/TypingTest'
+import { WORD_COUNT, WORD_LENGTH_RANGE } from './constants'
+
+const TypingTest = lazy(() => import('./components/TypingTest'))
+const PracticeMode = lazy(() => import('./components/PracticeMode'))
 
 function App() {
+  const { theme, toggleTheme } = useContext(ThemeContext)
   const [activeTab, setActiveTab] = useState('practice') // 'practice' or 'test'
-  const [theme, setTheme] = useState('light')
   
   // Letter selection state
   const [selectedLetters, setSelectedLetters] = useState(['a', 's', 'd', 'f'])
@@ -26,27 +30,14 @@ function App() {
   
   // Keyboard highlight
   const [activeKey, setActiveKey] = useState('')
-
-  useEffect(() => {
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark')
-    } else {
-      document.documentElement.classList.remove('dark')
-    }
-  }, [theme])
-
-  const toggleTheme = () => {
-    setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light')
-  }
-
+  
   const generateText = useCallback(() => {
     if (selectedLetters.length === 0) return ''
     
     const words = []
-    const wordCount = 50 // Generate 50 words
     
-    for (let i = 0; i < wordCount; i++) {
-      const wordLength = Math.floor(Math.random() * 4) + 3 // 3-6 characters
+    for (let i = 0; i < WORD_COUNT; i++) {
+      const wordLength = Math.floor(Math.random() * (WORD_LENGTH_RANGE[1] - WORD_LENGTH_RANGE[0] + 1)) + WORD_LENGTH_RANGE[0]
       let word = ''
       for (let j = 0; j < wordLength; j++) {
         const randomLetter = selectedLetters[Math.floor(Math.random() * selectedLetters.length)]
@@ -152,6 +143,7 @@ function App() {
             <div className="flex gap-2">
               <button
                 onClick={() => setActiveTab('practice')}
+                aria-label="Practice Mode"
                 className={`px-4 py-2 font-black text-sm border-3 border-black transition-all
                   ${activeTab === 'practice'
                     ? 'bg-[#3498db] text-white shadow-[3px_3px_0px_#000]'
@@ -162,6 +154,7 @@ function App() {
               </button>
               <button
                 onClick={() => setActiveTab('test')}
+                aria-label="Test Mode"
                 className={`px-4 py-2 font-black text-sm border-3 border-black transition-all
                   ${activeTab === 'test'
                     ? 'bg-[#3498db] text-white shadow-[3px_3px_0px_#000]'
@@ -178,6 +171,7 @@ function App() {
             )}
             <button
               onClick={toggleTheme}
+              aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
               className="px-3 py-2 bg-white dark:bg-gray-700 text-[#666] dark:text-gray-300 font-black text-sm border-3 border-black shadow-[2px_2px_0px_#000] active:translate-x-[1px] active:translate-y-[1px] active:shadow-[1px_1px_0px_#000]"
             >
               {theme === 'light' ? '🌙' : '☀️'}
@@ -187,39 +181,25 @@ function App() {
 
         {/* Tab Content */}
         <div className="flex-1 min-h-0">
-          {activeTab === 'practice' ? (
-            <div className="h-full grid grid-cols-2 gap-4 min-h-0">
-              {/* Left Column */}
-              <div className="flex flex-col gap-4 min-h-0">
-                <LetterSelector 
-                  selectedLetters={selectedLetters}
-                  setSelectedLetters={setSelectedLetters}
-                  onReset={resetPractice}
-                />
-                <div className="flex-1 min-h-0">
-                  <Keyboard 
-                    activeKey={activeKey}
-                    selectedLetters={selectedLetters}
-                  />
-                </div>
-              </div>
-
-              {/* Right Column - Typing Area */}
-              <div className="min-h-0">
-                <TypingArea
-                  practiceText={practiceText}
-                  userInput={userInput}
-                  currentIndex={currentIndex}
-                  errors={errors}
-                  onInput={handleInput}
-                  onKeyDown={handleKeyDown}
-                  onKeyUp={handleKeyUp}
-                />
-              </div>
-            </div>
-          ) : (
-            <TypingTest />
-          )}
+          <Suspense fallback={<div>Loading...</div>}>
+            {activeTab === 'practice' ? (
+              <PracticeMode
+                selectedLetters={selectedLetters}
+                setSelectedLetters={setSelectedLetters}
+                resetPractice={resetPractice}
+                activeKey={activeKey}
+                practiceText={practiceText}
+                userInput={userInput}
+                currentIndex={currentIndex}
+                errors={errors}
+                handleInput={handleInput}
+                handleKeyDown={handleKeyDown}
+                handleKeyUp={handleKeyUp}
+              />
+            ) : (
+              <TypingTest />
+            )}
+          </Suspense>
         </div>
       </div>
     </div>

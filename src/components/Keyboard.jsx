@@ -1,13 +1,9 @@
-import React, { useEffect, useRef } from 'react'
+import { memo, useEffect, useRef } from 'react'
 import { animate as anime } from 'animejs'
+import { KEYBOARD_LAYOUT, KEY_ANIMATION } from '../constants'
 
-const Keyboard = ({ activeKey, selectedLetters }) => {
+const Keyboard = memo(({ activeKey, selectedLetters }) => {
   const prevActiveKey = useRef('')
-  const keyboardLayout = [
-    ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
-    ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
-    ['z', 'x', 'c', 'v', 'b', 'n', 'm']
-  ]
 
   useEffect(() => {
     // Animate key press
@@ -18,8 +14,7 @@ const Keyboard = ({ activeKey, selectedLetters }) => {
           anime({
             targets: keyElement,
             scale: [1, 0.9, 1],
-            duration: 200,
-            easing: 'easeOutElastic(1, .8)'
+            ...KEY_ANIMATION,
           })
         }
         prevActiveKey.current = activeKey
@@ -65,7 +60,7 @@ const Keyboard = ({ activeKey, selectedLetters }) => {
       <h2 className="text-lg font-black text-[#1a1a1a] dark:text-white mb-3">KEYBOARD</h2>
       
       <div className="space-y-2">
-        {keyboardLayout.map((row, rowIndex) => (
+        {KEYBOARD_LAYOUT.map((row, rowIndex) => (
           <div key={rowIndex} className="flex gap-2 justify-center" style={{ paddingLeft: `${rowIndex * 16}px` }}>
             {row.map(renderKey)}
           </div>
@@ -81,7 +76,7 @@ const Keyboard = ({ activeKey, selectedLetters }) => {
       </div>
     </div>
   )
-}
+})
 
 export default Keyboard
 

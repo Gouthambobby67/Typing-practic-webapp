@@ -1,7 +1,7 @@
-import React, { useRef, useEffect } from 'react'
+import { memo, useRef, useEffect } from 'react'
 import { animate as anime } from 'animejs'
 
-const TypingArea = ({ practiceText, userInput, currentIndex, errors, onInput, onKeyDown, onKeyUp }) => {
+const TypingArea = memo(({ practiceText, userInput, currentIndex, errors, onInput, onKeyDown, onKeyUp }) => {
   const inputRef = useRef(null)
   const textContainerRef = useRef(null)
   const prevIndex = useRef(0)
@@ -77,7 +77,7 @@ const TypingArea = ({ practiceText, userInput, currentIndex, errors, onInput, on
       </p>
     </div>
   )
-}
+})
 
 export default TypingArea
 
